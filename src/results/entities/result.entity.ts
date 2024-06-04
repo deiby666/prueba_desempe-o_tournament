@@ -1,5 +1,5 @@
 import { Player } from "src/players/entities/player.entity";
-import { Column, Entity, PrimaryGeneratedColumn, OneToOne } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn, OneToOne, DeleteDateColumn } from "typeorm";
 
 
 @Entity()
@@ -12,4 +12,7 @@ export class Result{
 
     @OneToOne(() => Player, player => player.result)
     player : Player;
+
+    @DeleteDateColumn()
+    deletedAt: Date;
 }

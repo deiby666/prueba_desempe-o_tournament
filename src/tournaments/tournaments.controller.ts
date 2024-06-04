@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus, NotFoundException } from '@nestjs/common';
 import { TournamentsService } from './tournaments.service';
 import { CreateTournamentDto } from './dto/create-tournament.dto';
 import { UpdateTournamentDto } from './dto/update-tournament.dto';
+import { Tournament } from './entities/tournament.entity';
 
 @Controller('tournaments')
 export class TournamentsController {
@@ -10,7 +11,7 @@ export class TournamentsController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   create(@Body() CreateTournamentDto: CreateTournamentDto) {
-    return this.tournamentsService.create(this.tournamentsService);
+    return this.tournamentsService.create(CreateTournamentDto);
   }
 
   @Get()
@@ -25,20 +26,20 @@ export class TournamentsController {
     return this.tournamentsService.findOne(+id);
   }
 
-/*   @Get('autor/:id')
+  @Get('tournament/:id')
   @HttpCode(HttpStatus.OK)
-  async findOneWithBooks(@Param('id') id: string): Promise<Autore> {
-    const autor = await this.autoresService.findOneWithBooks(+id);
+  async findOneWithPlayers(@Param('id') id: string): Promise<Tournament> {
+    const autor = await this.tournamentsService.findOneWithPlayers(+id);
     if (!autor) {
-      throw new NotFoundException(`Autor con ID ${id} no encontrado`);
+      throw new NotFoundException(`tournament con ID ${id} no encontrado`);
     }
     return autor;
-  } */
+  }
 
 
   @Patch(':id')
   @HttpCode(HttpStatus.OK)
-  update(@Param('id') id: string, @Body() UpdatePlayerDto: UpdateTournamentDto) {
+  update(@Param('id') id: string, @Body() UpdateTournamentDto: UpdateTournamentDto) {
     return this.tournamentsService.update(+id, UpdateTournamentDto);
   }
 

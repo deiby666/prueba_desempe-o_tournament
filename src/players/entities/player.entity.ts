@@ -1,6 +1,6 @@
 import { Result } from "src/results/entities/result.entity";
 import { Tournament } from "src/tournaments/entities/tournament.entity";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn, OneToOne} from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn, OneToOne, ManyToOne, DeleteDateColumn} from "typeorm";
 
 @Entity()
 export class Player{
@@ -13,7 +13,10 @@ export class Player{
     @OneToOne(() => Result, result => result.score)
     result: Result;
 
-    @OneToMany(()=> Tournament, tournament => tournament.player)
-    tournaments: Tournament[];
+    @ManyToOne(() => Tournament, Tournament => Tournament.players)
+    tournament: Tournament;
+
+    @DeleteDateColumn()
+    deletedAt: Date;
 
 }
