@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, HttpCode } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, HttpCode, NotFoundException } from '@nestjs/common';
 import { ResultsService } from './results.service';
 import { CreateResultDto } from './dto/create-result.dto';
 import { UpdateResultDto } from './dto/update-result.dto';
+import { Result } from './entities/result.entity';
 
 @Controller('results')
 export class ResultsController {
@@ -25,15 +26,15 @@ export class ResultsController {
     return this.resultsService.findOne(+id);
   }
 
-/*   @Get('autor/:id')
+  @Get('autor/:id')
   @HttpCode(HttpStatus.OK)
-  async findOneWithBooks(@Param('id') id: string): Promise<Autore> {
-    const autor = await this.autoresService.findOneWithBooks(+id);
-    if (!autor) {
-      throw new NotFoundException(`Autor con ID ${id} no encontrado`);
+  async findOneWithPlayer(@Param('id') id: string): Promise<Result> {
+    const result = await this.resultsService.findOneWithPlayer(+id);
+    if (!result) {
+      throw new NotFoundException(`result con ID ${id} no encontrado`);
     }
-    return autor;
-  } */
+    return result;
+  } 
 
 
   @Patch(':id')
