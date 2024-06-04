@@ -1,5 +1,6 @@
+import { join } from "path";
 import { Player } from "src/players/entities/player.entity";
-import { Column, Entity, OneToMany,ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany,ManyToOne, PrimaryGeneratedColumn, DeleteDateColumn, JoinColumn} from "typeorm";
 
 @Entity()
 export class Tournament{
@@ -9,7 +10,10 @@ export class Tournament{
     @Column()
     nombre: string;
 
-    @ManyToOne(() => Player, player => player.tournaments)
-    player: Player;
+    @OneToMany(() => Player, player => player.tournament)
+    @JoinColumn()
+    players: Player[];
 
+    @DeleteDateColumn()
+    deletedAt: Date;
 }

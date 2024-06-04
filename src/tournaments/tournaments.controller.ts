@@ -1,17 +1,38 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus, NotFoundException, UnauthorizedException, Req } from '@nestjs/common';
 import { TournamentsService } from './tournaments.service';
 import { CreateTournamentDto } from './dto/create-tournament.dto';
 import { UpdateTournamentDto } from './dto/update-tournament.dto';
+import { Tournament } from './entities/tournament.entity';
+import { AssignPlayerDto } from './dto/assignPlayer.dto';
 
 @Controller('tournaments')
 export class TournamentsController {
   constructor(private readonly tournamentsService: TournamentsService) {}
 
+
+  //this method includes the validation of the api key required in the user history
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() CreateTournamentDto: CreateTournamentDto) {
-    return this.tournamentsService.create(this.tournamentsService);
+  create(
+    @Req() request: any,
+    @Body() createTournamentDto: CreateTournamentDto
+  ) {
+
+     const apiKey = request.headers['x-api-key'];
+    if (apiKey !== 'administrador') {
+      throw new UnauthorizedException('API Key inválida');
+    }
+    
+    return this.tournamentsService.create(createTournamentDto);
   }
+
+
+  @Post('player')
+  @HttpCode(HttpStatus.CREATED)
+  assignPlayer(@Body() assignPlayerDto: AssignPlayerDto) {
+    return this.tournamentsService.assignPlayer(assignPlayerDto);
+  }
+  
 
   @Get()
   @HttpCode(HttpStatus.OK)
@@ -25,20 +46,30 @@ export class TournamentsController {
     return this.tournamentsService.findOne(+id);
   }
 
-/*   @Get('autor/:id')
+  @Get('tournament/:id')
   @HttpCode(HttpStatus.OK)
-  async findOneWithBooks(@Param('id') id: string): Promise<Autore> {
-    const autor = await this.autoresService.findOneWithBooks(+id);
+  async findOneWithPlayers(@Param('id') id: string): Promise<Tournament> {
+    const autor = await this.tournamentsService.findOneWithPlayers(+id);
     if (!autor) {
-      throw new NotFoundException(`Autor con ID ${id} no encontrado`);
+      throw new NotFoundException(`tournament con ID ${id} no encontrado`);
     }
     return autor;
-  } */
+  }
+
+  @Get('name/:name')
+  @HttpCode(HttpStatus.OK)
+  async findAndOrder(@Param('name') name: string): Promise<Tournament> {
+    const autor = await this.tournamentsService.findOneWithPlayersOrdering(name);
+    if (!autor) {
+      throw new NotFoundException(`tournament con ID ${name} no encontrado`);
+    }
+    return autor;
+  }
 
 
   @Patch(':id')
   @HttpCode(HttpStatus.OK)
-  update(@Param('id') id: string, @Body() UpdatePlayerDto: UpdateTournamentDto) {
+  update(@Param('id') id: string, @Body() UpdateTournamentDto: UpdateTournamentDto) {
     return this.tournamentsService.update(+id, UpdateTournamentDto);
   }
 

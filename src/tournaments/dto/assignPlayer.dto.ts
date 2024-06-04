@@ -1,8 +1,13 @@
 import { IsInt, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreatePlayerDto {
-    @IsString()
+export class AssignPlayerDto {
+    
+    @IsNumber()
     @IsNotEmpty()
-    nombre: string;    
+    playerId: number;    
+
+    @IsNumber()
+    @IsOptional()
+    tournamentId?: number;    
 }
