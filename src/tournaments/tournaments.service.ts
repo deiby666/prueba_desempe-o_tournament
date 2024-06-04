@@ -84,6 +84,8 @@ export class TournamentsService {
     });
   }
 
+
+
   async findOneWithPlayers(id: number): Promise<Tournament> {
     const tournament = await this.tournamentRepository.createQueryBuilder('tournament',)
         .leftJoinAndSelect('tournament.players', 'player')
@@ -99,6 +101,22 @@ export class TournamentsService {
     return tournament;
   } 
 
+  //orderin filter in the user history
+  async findOneWithPlayersOrdering(name: string): Promise<Tournament> {
+    const tournament = await this.tournamentRepository.createQueryBuilder('tournament')
+      .leftJoinAndSelect('tournament.players', 'player')
+      .where('tournament.nombre ILIKE :name', { name: `%${name}%` })
+      .andWhere('tournament.deletedAt IS NULL')
+      .andWhere('player.deletedAt IS NULL')
+      .getOne();
+
+    if (!tournament) {
+      throw new NotFoundException(`Torneo con nombre ${name} no encontrado`);
+    }
+
+    return tournament;
+  }
+
   async update(id: number, UpdateTournamentDto: UpdateTournamentDto): Promise<Tournament> {
     const result = await this.tournamentRepository.update(id, UpdateTournamentDto);
     if (result.affected === 0) {
@@ -109,7 +127,6 @@ export class TournamentsService {
     return dataUpdated
   }
 
-  // : Promise<{ message: String }>
   async remove(id: number) {
     const autor = await this.tournamentRepository.findOne({ where: { id } });
     if (!autor) {

@@ -43,24 +43,7 @@ export class PlayersService {
       },
     });
   }
-
-/*   async findResultsByPlayer(id: number): Promise<Player> {
-    const autor = await this.playerRepository.findOne({
-      where: { id },
-      relations: ['ventas'],
-    });
-
-    console.log(autor);
-
-
-    if (!autor) {
-      throw new NotFoundException(`tournament con ID ${id} no encontrado`);
-    }
-
-    return autor;
-  }
- */
-
+  
   async update(id: number, UpdatePlayerDto: UpdatePlayerDto): Promise<Player> {
     const result = await this.playerRepository.update(id, UpdatePlayerDto);
     if (result.affected === 0) {
