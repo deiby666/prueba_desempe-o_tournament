@@ -18,54 +18,7 @@ export class PlayersService {
   ) { }
 
   async create(CreatePlayerDto: CreatePlayerDto): Promise<Player> { 
-
-  if (!CreatePlayerDto.tournamentId) {
-
-    //logica por si no recibe id del torneo
-    const availableTournamentIds = await this.tournamentRepository.find({
-      where: { deletedAt: null },
-      select: ['id'], 
-    });
-
-    if (availableTournamentIds.length === 0) {
-      throw new NotFoundException('No available tournaments');
-    }
-
-    const randomIndex = Math.floor(Math.random() * availableTournamentIds.length);
-    const randomTournamentId = availableTournamentIds[randomIndex].id;
-
-    const randomTournament = await this.tournamentRepository.findOneById(randomTournamentId);
-    console.log(randomTournament);
-    if (!randomTournament) {
-      throw new Error('Unexpected error: Retrieved invalid random tournament ID');
-    }
-
-    CreatePlayerDto.tournamentId = randomTournament.id;
-            
-    const tournament = await this.tournamentRepository.findOneBy({id: CreatePlayerDto.tournamentId, deletedAt: null });
-        if (!tournament) {
-          throw new NotFoundException('Tournament not found');
-        }
-
-          const player = this.playerRepository.create({
-          ...CreatePlayerDto,
-          tournament
-        });
-
-        return this.playerRepository.save(player); 
-    }
-      //logica por si lo recibe
-    const tournament = await this.tournamentRepository.findOneBy({id: CreatePlayerDto.tournamentId, deletedAt: null });
-    if (!tournament) {
-      throw new NotFoundException('Tournament not found');
-    }
-
-    const player = this.playerRepository.create({
-      ...CreatePlayerDto,
-      tournament
-    });
-
-    return this.playerRepository.save(player);
+    return this.playerRepository.save(CreatePlayerDto);
   }
 
 

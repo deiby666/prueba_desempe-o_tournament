@@ -19,9 +19,10 @@ export class ResultsService {
 
   async create(CreateResultDto: CreateResultDto): Promise<Result> {
 
+
     const player = await this.playerRepository.findOneBy({id: CreateResultDto.playerId, deletedAt: null });
     if (!player) {
-      throw new NotFoundException('Tournament not found');
+      throw new NotFoundException('player not found');
     }
 
     const result = this.resultRepository.create({
@@ -29,7 +30,7 @@ export class ResultsService {
       player
     });
 
-    return this.resultRepository.save(player);
+    return this.resultRepository.save(result);
   }
 
   async findAll(page: number = 1, limit: number = +process.env.LIMIT): Promise<Result[]> {
@@ -52,20 +53,44 @@ export class ResultsService {
     });
   }
 
+
    async findOneWithPlayer(id: number): Promise<Result> {
     const result = await this.resultRepository.findOne({
       where: { id },
       relations: ['player'],
     });
 
-
     if (!result) {
-      throw new NotFoundException(`tournament con ID ${id} no encontrado`);
+      throw new NotFoundException(`player con ID ${id} no encontrado`);
     }
 
     return result;
   }
- 
+
+
+  async findAllWithResults(): Promise<{ highestScore: Result; lowestScore: Result }> {
+    // Obtener todos los resultados con el puntaje más alto
+    const allResults = await this.resultRepository.find({
+      relations: ['player'], // Incluir relación con el jugador
+      order: { score: 'DESC' }, // Ordenar por puntaje en orden descendente (más alto primero)
+    });
+
+    // Obtener todos los resultados con el puntaje más bajo
+    const allResultsLowest = await this.resultRepository.find({
+      relations: ['player'], // Incluir relación con el jugador
+      order: { score: 'ASC' }, // Ordenar por puntaje en orden ascendente (más bajo primero)
+    });
+
+    // Seleccionar la primera fila de cada conjunto de resultados
+    const highestScore = allResults[0];
+    const lowestScore = allResultsLowest[0];
+
+    return {
+      highestScore,
+      lowestScore,
+    };
+  }
+
 
   async update(id: number, UpdateResultDto: UpdateResultDto): Promise<Result> {
     const result = await this.resultRepository.update(id, UpdateResultDto);

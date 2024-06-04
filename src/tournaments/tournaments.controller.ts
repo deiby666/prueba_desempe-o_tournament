@@ -3,6 +3,7 @@ import { TournamentsService } from './tournaments.service';
 import { CreateTournamentDto } from './dto/create-tournament.dto';
 import { UpdateTournamentDto } from './dto/update-tournament.dto';
 import { Tournament } from './entities/tournament.entity';
+import { AssignPlayerDto } from './dto/assignPlayer.dto';
 
 @Controller('tournaments')
 export class TournamentsController {
@@ -13,6 +14,13 @@ export class TournamentsController {
   create(@Body() CreateTournamentDto: CreateTournamentDto) {
     return this.tournamentsService.create(CreateTournamentDto);
   }
+
+  @Post('player')
+  @HttpCode(HttpStatus.CREATED)
+  assignPlayer(@Body() assignPlayerDto: AssignPlayerDto) {
+    return this.tournamentsService.assignPlayer(assignPlayerDto);
+  }
+  
 
   @Get()
   @HttpCode(HttpStatus.OK)

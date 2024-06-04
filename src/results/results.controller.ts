@@ -20,13 +20,22 @@ export class ResultsController {
     return this.resultsService.findAll();
   }
 
+
+  @Get('scores')
+  @HttpCode(HttpStatus.OK)
+  findScore() {
+    console.log("entro");
+    
+    return this.resultsService.findAllWithResults();
+  }
+
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   findOne(@Param('id') id: string) {
     return this.resultsService.findOne(+id);
   }
 
-  @Get('autor/:id')
+  @Get('result/:id')
   @HttpCode(HttpStatus.OK)
   async findOneWithPlayer(@Param('id') id: string): Promise<Result> {
     const result = await this.resultsService.findOneWithPlayer(+id);

@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTournamentDto } from './dto/create-tournament.dto';
 import { UpdateTournamentDto } from './dto/update-tournament.dto';
+import { AssignPlayerDto } from './dto/assignPlayer.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Tournament } from './entities/tournament.entity';
 import { Repository } from 'typeorm';
@@ -20,6 +21,51 @@ export class TournamentsService {
     return this.tournamentRepository.save(CreateTournamentDto);
   }
 
+
+  async assignPlayer(assignPlayerDto: AssignPlayerDto): Promise<Player> { 
+    const playerId = await this.playerRepository.findOneOrFail({
+      where: { id: assignPlayerDto.playerId },
+      relations: ['tournament'], 
+    });
+          
+    if (!assignPlayerDto.tournamentId) {
+      //logica por si no lo recibe
+      const availableTournamentIds = await this.tournamentRepository.find({
+        where: { deletedAt: null },
+        select: ['id'],
+      });
+            
+      if (availableTournamentIds.length === 0) {
+        throw new NotFoundException('No available tournaments');
+      }
+            
+      const randomIndex = Math.floor(Math.random() * availableTournamentIds.length);
+      const randomTournamentId = availableTournamentIds[randomIndex].id;
+            
+      assignPlayerDto.tournamentId = randomTournamentId;
+
+      const tournament = await this.tournamentRepository.findOneById(assignPlayerDto.tournamentId);
+      if (!tournament) {
+        throw new NotFoundException('Tournament not found');
+      }
+          
+      playerId.tournament = tournament;
+      await this.playerRepository.save(playerId); 
+            
+      return playerId;
+    }
+
+    //logica por si lo recibe
+    const tournament = await this.tournamentRepository.findOneById(assignPlayerDto.tournamentId);
+    if (!tournament) {
+      throw new NotFoundException('Tournament not found');
+    }
+      
+    playerId.tournament = tournament;
+    await this.playerRepository.save(playerId);
+    return playerId;
+  }
+    
   async findAll(page: number = 1, limit: number = +process.env.LIMIT): Promise<Tournament[]> {
     const skip = (page - 1) * limit;
     return this.tournamentRepository.find({
