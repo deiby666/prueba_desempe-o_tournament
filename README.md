@@ -71,7 +71,7 @@ Mantente en contacto
 
 Repositorio del proyecto
 
-Para obtener más información sobre el proyecto y su desarrollo, visita el repositorio de GitHub.
+Para obtener más información sobre el proyecto y su desarrollo, visita el repositorio de GitHub: https://github.com/deiby666/prueba_desempe-o_tournament/tree/main
 Licencia
 
 Nest tiene licencia MIT.
