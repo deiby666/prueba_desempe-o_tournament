@@ -72,6 +72,11 @@ Mantente en contacto
 Repositorio del proyecto
 
 Para obtener más información sobre el proyecto y su desarrollo, visita el repositorio de GitHub: https://github.com/deiby666/prueba_desempe-o_tournament/tree/main
+
+
+link swagger: 
+http://localhost:3000/api
+
 Licencia
 
 Nest tiene licencia MIT.
